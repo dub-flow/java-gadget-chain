@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -27,19 +29,29 @@ public class HomeController {
 	}
 
 	@RequestMapping("/serialize")
-	public String serialize() throws UnsupportedEncodingException {
+	public String serialize(@RequestParam(name = "doUrlEncode") boolean doUrlEncode) throws UnsupportedEncodingException {
 		Book myBook = new Book("A cool book!", "blub.txt");
 		String myBookSerialized = serializeBook(myBook);
 
 		// we do URL encoding here because, currently, the `/deserialize` route accepts the serialized object in the
 		// query string (and base64 may contain e.g. `+`)
-		String myBookSerializedEncoded = URLEncoder.encode(myBookSerialized, StandardCharsets.UTF_8.toString());
+		if (doUrlEncode) {
+			myBookSerialized = URLEncoder.encode(myBookSerialized, StandardCharsets.UTF_8.toString());
+		}
 
-		return myBookSerializedEncoded;
+		return myBookSerialized;
 	}
 
-	@RequestMapping("/deserialize")
+	@RequestMapping("/deserializeUrlEncoded")
 	public String deserialize(@RequestParam(name = "b") String bookBase64) {
+		System.out.println("Received: " + bookBase64);
+		Book myBook = deserializeBook(bookBase64);
+
+		return myBook.toString();
+	}
+
+	@PostMapping("/deserialize")
+	public String deserializePost(@RequestBody String bookBase64) {
 		System.out.println("Received: " + bookBase64);
 		Book myBook = deserializeBook(bookBase64);
 
