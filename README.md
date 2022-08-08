@@ -16,13 +16,24 @@
   - We send this to our `Spring Boot` app, which will create a randomly named file (e.g. `/tmp/upload_1e2897d1_aac7_4210_8911_57cbb6ac37c0_00000000.tmp`) in `/tmp` with the content `HACKEEED`
 
 * We also created our own `Gadget Chain`..
-  * General Description: 
-    - We created a new class `BookRCE` that executes a command upon deserialization
-    - We also create a separate mini app `Evil.java` where we serialize an instance of `BookRCE`, give it a command of our choosing, and then send the serialized base64-encoded string to `POST /deserialize`
-  * Exploitation:
-    - We first compile `Evil.java` via `javac BookRCE.java Evil.java`
-    - Now, we `cd` into the `java` folder, and run `java com.example.my.tests.Evil`
-      - This creates a file `naughty.ser` which contains a base64 string
-      - Last, we send this base64 string to `POST /deserialize`
-    - `PoC`:
-      - We simply do a `curl` while the target of our `curl` has a `python webserver` running
+  * `General Description`:
+    - We created some new classes, e.g. `BookRceSetter.java` and `BookRceSetter.java` that execute a command upon (e.g. upon deserialization, upon calling a setter, etc.)
+    - We also create a separate mini app `Evil.java` where we serialize an instance of these classes, give it a command of our choosing, and then send the serialized base64-encoded string to `POST /deserialize`
+  * `Command to Execute`:
+    - You can adjust the command to execute in `Evil.java` (this can't be done via a command line argument for now - Booo, I know.)
+  * `Setup`:
+    - We first compile `Evil.java` via `javac Evil.java BookRceSetter.java BookRceSetter.java`
+    - Now, we `cd` into the `/src/main/java` folder, and run `java com.example.my.tests.Evil`
+      - This creates 2 `naughty_X.ser` files which contain a base64 encoded version of our serialized payloads
+        - `naughty_BookRceReadObject.ser` -> Contains a payload that will execute a command upon deserialization
+        - `naughty_BookRceSetter.ser` -> Contains a payload that will execute upon a setter being called
+  * `Exploitation`:
+    - `PoC` - `curl`:
+      - We run a web server via `python3 -m http.server 82`
+      - Now, we adjust the IP address of the `curl` command in `Evil.java` to wherever this web server is running
+      - Last, we send a request to our API:
+        POST /deserialize
+        Content-Type: application/json
+
+        rO0ABX...
+      - If everything works, our web server gets a hit.

