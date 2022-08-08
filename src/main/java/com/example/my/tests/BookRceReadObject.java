@@ -3,14 +3,13 @@ package com.example.my.tests;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.lang.Process;
 
-public final class BookRCE implements Serializable {
+public final class BookRceReadObject implements Serializable {
     public String title;
     public String filename;
     public String cmd;
 
-    public BookRCE(String title, String filename, String cmd)
+    public BookRceReadObject(String title, String filename, String cmd)
     {
         this.title = title;
         this.filename = filename;
@@ -25,8 +24,8 @@ public final class BookRCE implements Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        System.out.println("BookRCE readObject triggeeeeeeered");
+        System.out.println("BookRceReadObject - readObject method triggeeeeeeered");
         System.out.println("Command: " + this.cmd);
-        Process process = Runtime.getRuntime().exec(this.cmd);
+        Runtime.getRuntime().exec(this.cmd);
     }
 }

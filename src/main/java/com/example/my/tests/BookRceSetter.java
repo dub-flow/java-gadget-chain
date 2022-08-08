@@ -1,16 +1,14 @@
 package com.example.my.tests;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.lang.Process;
 
-public final class BookRceReadObject implements Serializable {
+public final class BookRceSetter implements Serializable {
     public String title;
     public String filename;
     public String cmd;
 
-    public BookRceReadObject(String title, String filename, String cmd)
+    public BookRceSetter(String title, String filename, String cmd)
     {
         this.title = title;
         this.filename = filename;
@@ -21,12 +19,14 @@ public final class BookRceReadObject implements Serializable {
     public String toString() {
         return "Book [title=" + this.title + ", filename=" + this.filename + "]";
     }
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
 
-        System.out.println("BookRCE readObject triggeeeeeeered");
+    // vulnerable setter that can be attacked during deserialization
+    public void setCmd(String cmd) throws IOException {
+        this.cmd = cmd;
+
+        // execute the set command, because.. why not?
+        System.out.println("BookRceSetter - setter triggeeeeeeered");
         System.out.println("Command: " + this.cmd);
-        Process process = Runtime.getRuntime().exec(this.cmd);
+        Runtime.getRuntime().exec(this.cmd);
     }
 }
