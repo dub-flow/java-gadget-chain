@@ -30,10 +30,10 @@
       - We run a web server via `python3 -m http.server 82`
       - Now, we adjust the IP address of the `curl` command in `Evil.java` to wherever this web server is running
       - Last, we send a request to our API:
-        POST /deserialize
-        Content-Type: application/json
-
-        <content of `naughty_BookRceReadObject.ser`>
+        POST /deserialize  
+        Content-Type: application/json  
+        <br />  
+        <content of `naughty_BookRceReadObject.ser`>  
       - If everything works, our web server gets hit
 
 * Testing `Setter Gadget Chain` -> Not working
