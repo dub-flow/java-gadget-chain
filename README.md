@@ -32,7 +32,7 @@
       - Last, we send a request to our API:  
         POST /deserialize  
         Content-Type: application/json  
-        <br />  
+        <br />
         <content of `naughty_BookRceReadObject.ser`>  
       - If everything works, our web server gets hit
 
